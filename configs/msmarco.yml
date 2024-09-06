@@ -1,0 +1,11 @@
+corpus: data/mteb/msmarco/corpus.jsonl
+queries: data/mteb/msmarco/queries.jsonl
+qrels: data/mteb/msmarco/qrels/train.tsv
+embedding: intfloat/e5-base-v2
+doc_prompt: "passage: "
+query_prompt: "query: "
+embedding_seq_len: 512
+embedding_batch_size: 1024
+ce: BAAI/bge-reranker-v2-m3
+ce_seq_len: 512
+out_dir: out/msmarco

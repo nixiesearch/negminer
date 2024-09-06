@@ -1,0 +1,10 @@
+corpus: data/mteb/arguana/corpus.jsonl
+queries: data/mteb/arguana/queries.jsonl
+qrels: data/mteb/arguana/qrels/test.tsv
+embedding: intfloat/e5-base-v2
+doc_prompt: "passage: "
+query_prompt: "query: "
+embedding_seq_len: 512
+ce: BAAI/bge-reranker-v2-m3
+ce_seq_len: 512
+out_dir: out/arguana
