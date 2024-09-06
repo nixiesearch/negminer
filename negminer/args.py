@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 from transformers import HfArgumentParser
 import sys
-import os
 import yaml
 
 
