@@ -3,7 +3,7 @@ from typing import List, Dict
 from datasets import load_dataset
 from functools import partial
 from transformers import PreTrainedTokenizerBase
-from datasets import Dataset
+from datasets import Dataset, Features, Value
 from collections import defaultdict
 import os
 import logging
@@ -81,14 +81,24 @@ class Queries:
     def load_qrels(path: str, corpus: Dataset, queries: Dataset) -> Dataset:
         doc_ids = set(corpus["id"])
         query_ids = set(queries["id"])
-        qrels = load_dataset("csv", data_files=path, split="train", delimiter="\t").to_dict()
+        qrels = load_dataset(
+            "csv",
+            data_files=path,
+            split="train",
+            delimiter="\t",
+            features=Features({"query-id": Value("string"), "corpus-id": Value("string"), "score": Value("float")}),
+        )
         qreldict: Dict[str, List[Qrel]] = defaultdict(list)
-        mismatch_count = 0
+        doc_mismatch_count = 0
+        query_mismatch_count = 0
         for qid, docid, score in zip(qrels["query-id"], qrels["corpus-id"], qrels["score"]):
             if qid in query_ids and docid in doc_ids:
                 qreldict[qid].append(Qrel(docid, float(score)))
             else:
-                mismatch_count += 1
+                if qid not in query_ids:
+                    query_mismatch_count += 1
+                if docid not in doc_ids:
+                    doc_mismatch_count += 1
         qrel_qids = []
         qrel_docids = []
         qrel_scores = []
@@ -97,5 +107,7 @@ class Queries:
             qrel_docids.append([qrel.docid for qrel in qrs])
             qrel_scores.append([qrel.score for qrel in qrs])
         qrels_dataset = Dataset.from_dict({"query": qrel_qids, "doc": qrel_docids, "score": qrel_scores})
-        logger.info(f"Loaded {len(qrel_qids)} queries, dropped {mismatch_count} broken refs")
+        logger.info(
+            f"Loaded {len(qrel_qids)} queries, dropped doc={doc_mismatch_count} q={query_mismatch_count} broken refs"
+        )
         return qrels_dataset

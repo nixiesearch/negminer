@@ -24,7 +24,7 @@ dependencies = [
     "numpy",
     "flash_attn",
     "info-nce-pytorch",
-    "faiss-gpu"
+    "faiss-gpu-cu12"
 ]
 
 [project.optional-dependencies]

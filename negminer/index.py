@@ -3,6 +3,7 @@ from typing import Tuple
 from dataclasses import dataclass
 import faiss
 import logging
+from tqdm import tqdm
 
 logger = logging.getLogger()
 
@@ -18,10 +19,18 @@ class Indexer:
         logger.info("HNSW index build started")
         dims = docs.shape[1]
         self.index = faiss.IndexHNSWFlat(dims, m)
-        self.index.hnsw.efConstruction = efc
         self.index.hnsw.efSearch = ef
-        self.index.add(docs)
+        self.index.hnsw.efConstruction = efc
+        faiss.omp_set_num_threads(32)
+        for chunk in tqdm(np.array_split(docs, 500), desc="indexing"):
+            self.index.add(chunk)
         logger.info("HNSW index built successfully")
 
     def search(self, queries: np.ndarray, top_n: int) -> Tuple[np.ndarray, np.ndarray]:
-        return self.index.search(queries, top_n)
+        sims = []
+        docs = []
+        for chunk in tqdm(np.array_split(queries, 100), desc="searching"):
+            chunk_sims, chunk_docs = self.index.search(chunk, top_n)
+            sims.append(chunk_sims)
+            docs.append(chunk_docs)
+        return (np.vstack(sims), np.vstack(docs))

@@ -17,17 +17,21 @@ if __name__ == "__main__":
     corpus = Dataset.load_from_disk(f"{args.out_dir}/corpus_embed").with_format("np")
     qrels = Dataset.load_from_disk(f"{args.out_dir}/qrels")
 
+    logger.info("Loading embeddings")
+    corpus_embed_col = corpus["embed"]
+    queries_embed_col = queries["embed"]
+
+    index = Indexer(corpus_embed_col)
+    sims, docs = index.search(queries_embed_col, 16)
+
     qrels_dict: Dict[str, List[Qrel]] = dict()
     for qid, docids, scores in tqdm(zip(qrels["query"], qrels["doc"], qrels["score"]), desc="caching qrels"):
         qrels_dict[qid] = [Qrel(docid, score) for docid, score in zip(docids, scores)]
 
     query_ids = queries["id"]
-    query_embs = {id: emb for id, emb in zip(query_ids, queries["embed"])}
+    query_embs = {id: emb for id, emb in tqdm(zip(query_ids, queries_embed_col), desc="caching query embs")}
     doc_ids = corpus["id"]
-    doc_embs = {id: emb for id, emb in zip(doc_ids, corpus["embed"])}
-
-    index = Indexer(corpus["embed"])
-    sims, docs = index.search(queries["embed"], 16)
+    doc_embs = {id: emb for id, emb in tqdm(zip(doc_ids, corpus_embed_col), desc="caching doc embs")}
 
     out_qid: List[str] = []
     out_doc_ids: List[List[str]] = []

@@ -9,6 +9,9 @@ from datasets import Dataset
 import numpy as np
 from torch.utils.data import DataLoader
 from tqdm import tqdm
+import logging
+
+logger = logging.getLogger()
 
 
 @dataclass
@@ -65,4 +68,7 @@ class TextEncoder:
                 batch_embeddings = self.acc.gather_for_metrics(batch_embeddings).cpu()
                 embeddings.append(batch_embeddings)
                 progress.update(self.acc.num_processes)
-        return torch.vstack(embeddings).numpy()
+        logger.info("Embedding done, merging results")
+        result = torch.vstack(embeddings).numpy()
+        logger.info("Merged")
+        return result
