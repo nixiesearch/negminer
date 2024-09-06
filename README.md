@@ -9,7 +9,9 @@ A tool to simplify hard negative mining process for training embeddings models:
 
 ## What are hard negatives?
 
-todo
+Hard negatives are search results which are close semantically to your query, but not being relevant.
+
+![docs/muffin.jpg](Dog or muffin?)
 
 ## Install
 
