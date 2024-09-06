@@ -1,5 +1,9 @@
 # Negminer: A hard negative mining tool
 
+[![License: Apache 2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
+![Last commit](https://img.shields.io/github/last-commit/nixiesearch/negminer)
+[![Join our slack](https://img.shields.io/badge/Slack-join%20the%20community-blue?logo=slack&style=social)](https://communityinviter.com/apps/nixiesearch/nixiesearch)
+
 A tool to simplify hard negative mining process for training embeddings models:
 
 * Embeds documents and queries, builds ANN index, retrieves top-N candidates and scores them with a cross-encoder model.
