@@ -13,6 +13,10 @@ Hard negatives are search results which are close semantically to your query, bu
 
 ![Dog or muffin?](docs/muffin.jpg)
 
+Embedding models are being trained with a [contrastive approach](todo) when you need to show the difference between relevant and irrelevant document to the model. A simple way of getting negatives is to use random sampling: any random document is a negative! But this approach makes the life of the underlying ML model too simple, as it's too easy to distinguish `ketchup` from `tractor` for a `tomato` query. 
+
+Harder negatives make the model training much harder: it need to pick minor differences between semantics of documents to figure out what is relevant and what's not - like on a picture with Chihuahuas and muffins above. Negminer automates the job of building such hard negatives.
+
 ## Install
 
 Negminer is not yet on PyPi, so install it from GIT:
@@ -93,7 +97,7 @@ After the process is done, the `qrels_mined` dataset will appear in the `out_dir
 
 ### Scoring candidates
 
-Not yet implemented.
+Not yet implemented, come later.
 
 ## Data format 
 
