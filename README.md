@@ -4,8 +4,8 @@ A tool to simplify hard negative mining process for training embeddings models:
 
 * Embeds documents and queries, builds ANN index, retrieves top-N candidates and scores them with a cross-encoder model.
 * Supports multi-GPU inference: [complete MSMARCO with 8M documents](configs/msmarco.yml) embedded in 10 minutes on 2x RTX4090
-* Uses FAISS HNSW index for ANN candidate retrieval
-* Can run any [sentence-transformers] compatible embedding and cross-encoder model.
+* Uses [FAISS](https://github.com/facebookresearch/faiss) HNSW index for ANN candidate retrieval
+* Can run any [sentence-transformers](https://sbert.net/) compatible embedding and cross-encoder model.
 
 ## What are hard negatives?
 
@@ -55,7 +55,7 @@ out_dir: out/msmarco # work dir
 
 ### Preprocessing data
 
-During preprocessing, Negminer reformats the data in an [Apache Arrow](todo) tables with the [HF datasets](todo), so on later stages data can be directly streamed into the GPU. To run preprocessing, run the `negminer.preprocess` job:
+During preprocessing, Negminer reformats the data in an [Apache Arrow](https://arrow.apache.org/) tables with the [HF datasets](https://huggingface.co/docs/datasets/en/index), so on later stages data can be directly streamed into the GPU. To run preprocessing, run the `negminer.preprocess` job:
 
 ```bash
 python -m negminer.preprocess <path-to-config.yml>
@@ -71,7 +71,7 @@ For large embedding models, the embedding process can take some time and you may
 python -m negminer.embed <path-to-config.yml>
 ```
 
-For multi-GPU setup, run the embedder with the [Accelerate]():
+For multi-GPU setup, run the embedder with the [Accelerate](https://huggingface.co/docs/accelerate/index):
 
 ```bash
 accelerate launch -m negminer.embed <path-to-config.yml>
@@ -81,7 +81,7 @@ After the emedding process is done, a `corpus_embed` and `queries_embed` dataset
 
 ### Retrieving candidates
 
-After documents and queries are embedded, you can build the ANN index with the [FAISS](todo) library:
+After documents and queries are embedded, you can build the ANN index with the [FAISS](https://github.com/facebookresearch/faiss) library:
 
 ```bash
 python -m negminer.search <path-to-config.yml>
@@ -95,7 +95,7 @@ Not yet implemented.
 
 ## Data format 
 
-Negminer supports [TREC input](https://stackoverflow.com/questions/10480022/what-is-the-trec-format) format in the [BEIR](todo) flavor:
+Negminer supports [TREC input](https://stackoverflow.com/questions/10480022/what-is-the-trec-format) format in the [BEIR](https://github.com/beir-cellar/beir) flavor:
 
 * a set of `corpus.json`, `queries.json` and `qrels.tsv` files.
 * `corpus.json` file contains your document corpus with `_id`, `text` and optional `title` fields.
