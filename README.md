@@ -40,10 +40,12 @@ pip install -e .
 The mining process has multiple steps:
 
 * Create a config file.
-* Preprocess and tokenize the dataset.
+* Preprocess and tokenize the dataset for embedding.
 * Embed documents and queries
 * Perform ANN search to retrieve candidates
+* Preprocess the mined query-document pairs dataset for CE scoring
 * Score candidates with a Cross-Encoder model
+* Export negatives
 
 ### Config file
 
@@ -68,7 +70,7 @@ out_dir: out/msmarco # work dir
 During preprocessing, Negminer reformats the data in an [Apache Arrow](https://arrow.apache.org/) tables with the [HF datasets](https://huggingface.co/docs/datasets/en/index), so on later stages data can be directly streamed into the GPU. To run preprocessing, run the `negminer.preprocess` job:
 
 ```bash
-python -m negminer.preprocess <path-to-config.yml>
+python -m negminer.embed.preprocess <path-to-config.yml>
 ```
 
 In your `out_dir` directory you will see a `corpus`, `queries` and `qrels` datasets.
@@ -99,9 +101,29 @@ python -m negminer.search <path-to-config.yml>
 
 After the process is done, the `qrels_mined` dataset will appear in the `out_dir`.
 
-### Scoring candidates
+### Tokenize mined query-document pairs
 
-Not yet implemented, come later.
+As embedding and cross-encoder model might use different tokenizers, we need to reprocess the dataset again, tokenizing all the mined query-document pairs:
+
+```bash
+python -m negminer.score.prepare <path-to-config.yml>
+```
+
+On this step for all query-document pairs, we will tokenize each, and save them into a `out_dir/ce_tokenized` dir.
+
+### Scoring with cross-encoders
+
+On the last step you need to run the CE scoring process:
+
+```bash
+accelerate launch -m negminer.score <path-to-config.yml>
+```
+
+It might take some time: MSMARCO train split with 16 negatives each takes ~1h on 2x 4090 to be scored. At the end of the process, you'll get a `out_dir/qrels_scored` dataset.
+
+### Exporting negatives
+
+TODO
 
 ## Data format 
 
