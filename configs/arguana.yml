@@ -8,4 +8,5 @@ embedding_seq_len: 512
 embedding_batch_size: 1024
 ce: BAAI/bge-reranker-v2-m3
 ce_seq_len: 512
+ce_batch_size: 256
 out_dir: out/arguana

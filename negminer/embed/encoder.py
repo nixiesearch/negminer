@@ -69,6 +69,6 @@ class TextEncoder:
                 embeddings.append(batch_embeddings)
                 progress.update(self.acc.num_processes)
         logger.info("Embedding done, merging results")
-        result = torch.vstack(embeddings).numpy()
+        merged = torch.vstack(embeddings).numpy()
         logger.info("Merged")
-        return result
+        return merged

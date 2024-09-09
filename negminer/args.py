@@ -15,6 +15,8 @@ class NegMineArgs:
     embedding_seq_len: int = field(default=512, metadata={"help": "max seq len in tokens for the embedding model"})
     embedding_batch_size: int = field(default=32, metadata={"help": "batch size for the embedding model"})
     ce_seq_len: int = field(default=512, metadata={"help": "max seq len in tokens for the ranking model"})
+    ce_attn_implementation: str = field(default="eager", metadata={"help": "attn impl"})
+    ce_batch_size: int = field(default=32, metadata={"help": "batch size for CE model"})
     doc_prompt: str = field(default="", metadata={"help": "doc prompt"})
     query_prompt: str = field(default="", metadata={"help": "query prompt"})
     negatives: int = field(default=10, metadata={"help": "how many negatives to mine"})

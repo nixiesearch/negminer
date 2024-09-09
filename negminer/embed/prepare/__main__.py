@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer
 from negminer.args import parse_args
 from negminer.log import setup_logging
-from negminer.prepare.data import Queries
+from negminer.embed.prepare.data import Queries
 import os
 
 logger = setup_logging()
