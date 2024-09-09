@@ -1,6 +1,6 @@
-corpus: data/mteb/arguana/corpus.jsonl
-queries: data/mteb/arguana/queries.jsonl
-qrels: data/mteb/arguana/qrels/test.tsv
+corpus: data/mteb/scifact/corpus.jsonl
+queries: data/mteb/scifact/queries.jsonl
+qrels: data/mteb/scifact/qrels/test.tsv
 embedding: intfloat/e5-base-v2
 doc_prompt: "passage: "
 query_prompt: "query: "
@@ -9,6 +9,6 @@ embedding_batch_size: 1024
 ce: BAAI/bge-reranker-v2-m3
 ce_seq_len: 512
 ce_batch_size: 256
-out_dir: out/arguana
+out_dir: out/scifact
 negatives_count: 5
 negatives_candidates_count: 10

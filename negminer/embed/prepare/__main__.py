@@ -14,9 +14,9 @@ if __name__ == "__main__":
     tokenizer.deprecation_warnings["Asking-to-pad-a-fast-tokenizer"] = True
 
     corpus = Queries.load_corpus(tokenizer, args.corpus, args.doc_prompt, args.embedding_seq_len)
-    # corpus.save_to_disk(f"{args.out_dir}/corpus")
+    corpus.save_to_disk(f"{args.out_dir}/corpus")
     queries = Queries.load_queries(tokenizer, args.queries, args.query_prompt, args.embedding_seq_len)
-    # queries.save_to_disk(f"{args.out_dir}/queries")
+    queries.save_to_disk(f"{args.out_dir}/queries")
     qrels = Queries.load_qrels(args.qrels, corpus, queries)
     qrels.save_to_disk(f"{args.out_dir}/qrels")
 

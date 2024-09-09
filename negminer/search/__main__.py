@@ -1,8 +1,8 @@
 from negminer.args import parse_args
 from negminer.log import setup_logging
 from datasets import Dataset
-from negminer.index import Indexer
-from negminer.prepare.data import Qrel
+from negminer.search.index import Indexer
+from negminer.embed.prepare.data import Qrel
 from typing import Dict, List
 from tqdm import tqdm
 import numpy as np
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     queries_embed_col = queries["embed"]
 
     index = Indexer(corpus_embed_col)
-    sims, docs = index.search(queries_embed_col, 16)
+    sims, docs = index.search(queries_embed_col, args.negatives_candidates_count)
 
     qrels_dict: Dict[str, List[Qrel]] = dict()
     for qid, docids, scores in tqdm(zip(qrels["query"], qrels["doc"], qrels["score"]), desc="caching qrels"):
@@ -51,13 +51,13 @@ if __name__ == "__main__":
             qid_doc_cos = [1 - cosine(query_embs[qid], doc_embs[docid]) for docid in qid_doc_ids]
 
             # then all we found
-            found_docids = [doc_ids[num] for num in np.flip(found_docnums)]
-            for docid, cos in zip(found_docids, np.flip(found_sims)):
+            found_docids = [doc_ids[num] for num in found_docnums]
+            for docid, cos in zip(found_docids, found_sims):
                 if docid not in qid_qrel_docids:
                     mined_negs += 1
                     qid_doc_ids.append(docid)
                     qid_doc_scores.append(0.0)
-                    qid_doc_cos.append(cos)
+                    qid_doc_cos.append(1 - cos)
             # all to all docs
             qid_doc_doc_cos: List[float] = []
             for doc1 in qid_doc_ids:

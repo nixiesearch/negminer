@@ -15,7 +15,7 @@ class DocScore:
 
 
 class Indexer:
-    def __init__(self, docs: np.ndarray, m: int = 64, efc: int = 256, ef: int = 128):
+    def __init__(self, docs: np.ndarray, m: int = 128, efc: int = 512, ef: int = 256):
         logger.info("HNSW index build started")
         dims = docs.shape[1]
         self.index = faiss.IndexHNSWFlat(dims, m)

@@ -19,7 +19,19 @@ class NegMineArgs:
     ce_batch_size: int = field(default=32, metadata={"help": "batch size for CE model"})
     doc_prompt: str = field(default="", metadata={"help": "doc prompt"})
     query_prompt: str = field(default="", metadata={"help": "query prompt"})
-    negatives: int = field(default=10, metadata={"help": "how many negatives to mine"})
+    negatives_count: int = field(default=8, metadata={"help": "how many negatives to mine"})
+    negatives_candidates_count: int = field(
+        default=16, metadata={"help": "how many negative candidates to search for"}
+    )
+    dup_threshold: float = field(
+        default=0.95, metadata={"help": "cosine distance between docs to be considered duplicates and dropped"}
+    )
+    pos_neg_threshold: float = field(
+        default=0.05,
+        metadata={
+            "help": "minimal CE score diff between query-pos and query-neg. negatives with less than this threshold are considered false negatives and dropped"
+        },
+    )
 
 
 def parse_args() -> NegMineArgs:
