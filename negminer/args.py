@@ -32,6 +32,9 @@ class NegMineArgs:
             "help": "minimal CE score diff between query-pos and query-neg. negatives with less than this threshold are considered false negatives and dropped"
         },
     )
+    hnsw_m: int = field(default=64, metadata={"help": "FAISS HNSW M value"})
+    hnsw_ef_search: int = field(default=128, metadata={"help": "FAISS HNSW M value"})
+    hnsw_ef_construction: int = field(default=256, metadata={"help": "FAISS HNSW M value"})
 
 
 def parse_args() -> NegMineArgs:

@@ -12,3 +12,9 @@ ce_batch_size: 256
 out_dir: out/msmarco
 negatives_count: 64
 negatives_candidates_count: 64
+hnsw_m: 64
+hnsw_ef_search: 128
+hnsw_ef_construction: 256
+# hnsw_m: 8
+# hnsw_ef_search: 12
+# hnsw_ef_construction: 16

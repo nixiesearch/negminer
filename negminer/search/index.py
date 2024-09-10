@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import faiss
 import logging
 from tqdm import tqdm
+import os
 
 logger = logging.getLogger()
 
@@ -15,13 +16,14 @@ class DocScore:
 
 
 class Indexer:
-    def __init__(self, docs: np.ndarray, m: int = 128, efc: int = 512, ef: int = 256):
+    # def __init__(self, docs: np.ndarray, m: int = 64, efc: int = 256, ef: int = 128):
+    def __init__(self, docs: np.ndarray, m: int = 16, efc: int = 32, ef: int = 24):
         logger.info("HNSW index build started")
         dims = docs.shape[1]
         self.index = faiss.IndexHNSWFlat(dims, m)
         self.index.hnsw.efSearch = ef
         self.index.hnsw.efConstruction = efc
-        faiss.omp_set_num_threads(32)
+        faiss.omp_set_num_threads(os.cpu_count())
         for chunk in tqdm(np.array_split(docs, 500), desc="indexing"):
             self.index.add(chunk)
         logger.info("HNSW index built successfully")
