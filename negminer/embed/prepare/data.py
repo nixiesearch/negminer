@@ -24,7 +24,6 @@ class Queries:
             tokenizer=tokenizer,
             path=path,
             prompt=prompt,
-            need_title=True,
             max_len=max_len,
         )
 
@@ -34,14 +33,11 @@ class Queries:
             tokenizer=tokenizer,
             path=path,
             prompt=prompt,
-            need_title=False,
             max_len=max_len,
         )
 
     @staticmethod
-    def _load_json(
-        tokenizer: PreTrainedTokenizerBase, path: str, prompt: str, need_title: bool, max_len: int
-    ) -> Dataset:
+    def _load_json(tokenizer: PreTrainedTokenizerBase, path: str, prompt: str, max_len: int) -> Dataset:
         def maybe_join(title: str, text: str) -> str:
             if len(title) > 0:
                 return title + " " + text
@@ -64,9 +60,12 @@ class Queries:
 
         num_cpus = os.cpu_count()
         dataset = load_dataset("json", data_files=path, split="train")
+        dataset = dataset.cast_column("_id", Value("string"))
         fields_to_drop = ["_id", "text"]
-        if need_title:
+        need_title = False
+        if "title" in dataset:
             fields_to_drop.append("title")
+            need_title = True
         dataset = dataset.map(
             function=partial(join_and_tokenize, prompt, need_title),
             batched=True,

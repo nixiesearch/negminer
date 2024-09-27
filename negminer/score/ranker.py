@@ -19,12 +19,16 @@ class Ranker:
             torch_dtype=torch.bfloat16,
             attn_implementation=args.ce_attn_implementation,
             trust_remote_code=True,
+            load_in_8bit=True,
+            # device_map="auto"
         )
+        base.config.pad_token_id = 0
         self.model = acc.prepare_model(base)
         self.model.eval()
         self.args = args
         self.tokenizer = AutoTokenizer.from_pretrained(args.ce)
         self.tokenizer.deprecation_warnings["Asking-to-pad-a-fast-tokenizer"] = True
+        self.tokenizer.pad_token = "<unk>"
         self.acc = acc
 
     def score(self, pairs: Dataset) -> Dict[Tuple[str, str], float]:

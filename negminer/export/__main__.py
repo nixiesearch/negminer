@@ -3,6 +3,7 @@ from negminer.args import parse_args
 from datasets import Dataset
 from typing import Dict, List, Any
 from itertools import batched
+import os
 
 logger = setup_logging()
 
@@ -33,6 +34,9 @@ if __name__ == "__main__":
         neg: List[List[str]] = []
         neg_cos_score: List[List[float]] = []
         neg_ce_score: List[List[float]] = []
+        out_dropped_dupes: List[float] = []
+        out_dropped_too_close: List[float] = []
+        out_dropped_too_high: List[float] = []
         for (
             qid,
             docids,
@@ -57,6 +61,9 @@ if __name__ == "__main__":
             query_neg_cos_score: List[float] = []
             query_neg_ce_score: List[float] = []
             min_pos_ce_score = min([score for explicit, score in zip(qde_scores, qdce_scores) if explicit > 0])
+            dropped_dupes = 0
+            dropped_too_close = 0
+            dropped_too_high = 0
             for (
                 (idx, docid),
                 qde_score,
@@ -71,15 +78,19 @@ if __name__ == "__main__":
                     query_pos_cos_score.append(qdcos_score)
                     query_pos_ce_score.append(qdce_score)
                 else:
-                    # negative
-                    if (
-                        not is_duplicate(idx, list(ddcos_scores))
-                        and (min_pos_ce_score - qdce_score > args.pos_neg_threshold)
-                        and len(query_neg) < args.negatives_count
-                    ):
-                        query_neg.append(doc)
-                        query_neg_cos_score.append(qdcos_score)
-                        query_neg_ce_score.append(qdce_score)
+                    if not is_duplicate(idx, list(ddcos_scores)):
+                        if min_pos_ce_score - qdce_score > args.pos_neg_threshold:
+                            if qdce_score < args.pos_threshold:
+                                if len(query_neg) < args.negatives_count:
+                                    query_neg.append(doc)
+                                    query_neg_cos_score.append(qdcos_score)
+                                    query_neg_ce_score.append(qdce_score)
+                            else:
+                                dropped_too_high += 1
+                        else:
+                            dropped_too_close += 1
+                    else:
+                        dropped_dupes += 1
 
             if len(query_pos) > 0 and len(query_neg) > 0:
                 query_out.append(query)
@@ -89,6 +100,9 @@ if __name__ == "__main__":
                 neg.append(query_neg)
                 neg_cos_score.append(query_neg_cos_score)
                 neg_ce_score.append(query_neg_ce_score)
+                out_dropped_dupes.append(dropped_dupes)
+                out_dropped_too_close.append(dropped_too_close)
+                out_dropped_too_high.append(dropped_too_high)
         return {
             "query": query_out,
             "pos": pos,
@@ -97,6 +111,9 @@ if __name__ == "__main__":
             "neg": neg,
             "neg_cos_score": neg_cos_score,
             "neg_ce_score": neg_ce_score,
+            "dropped_dupes": out_dropped_dupes,
+            "dropped_too_close": out_dropped_too_close,
+            "dropped_too_high": out_dropped_too_high,
         }
 
     sampled = qrels.map(function=sample, batched=True, desc="sampling", remove_columns=qrels.column_names)

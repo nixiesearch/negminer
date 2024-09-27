@@ -12,3 +12,6 @@ ce_batch_size: 256
 out_dir: out/arguana
 negatives_count: 5
 negatives_candidates_count: 10
+hnsw_m: 64
+hnsw_ef_search: 128
+hnsw_ef_construction: 256

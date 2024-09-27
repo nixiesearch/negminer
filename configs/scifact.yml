@@ -10,5 +10,5 @@ ce: BAAI/bge-reranker-v2-m3
 ce_seq_len: 512
 ce_batch_size: 256
 out_dir: out/scifact
-negatives_count: 5
-negatives_candidates_count: 10
+negatives_count: 12
+negatives_candidates_count: 16

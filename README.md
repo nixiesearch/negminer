@@ -70,7 +70,7 @@ out_dir: out/msmarco # work dir
 During preprocessing, Negminer reformats the data in an [Apache Arrow](https://arrow.apache.org/) tables with the [HF datasets](https://huggingface.co/docs/datasets/en/index), so on later stages data can be directly streamed into the GPU. To run preprocessing, run the `negminer.preprocess` job:
 
 ```bash
-python -m negminer.embed.preprocess <path-to-config.yml>
+python -m negminer.embed.prepare <path-to-config.yml>
 ```
 
 In your `out_dir` directory you will see a `corpus`, `queries` and `qrels` datasets.
